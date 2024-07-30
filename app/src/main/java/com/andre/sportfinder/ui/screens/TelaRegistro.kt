@@ -1,4 +1,3 @@
-
 package com.andre.sportfinder.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -11,10 +10,11 @@ import com.andre.sportfinder.viewmodel.UsuarioViewModel
 import com.andre.sportfinder.data.entity.Usuario
 
 @Composable
-fun TelaRegistro(viewModel: UsuarioViewModel, onRegister: () -> Unit) {
+fun TelaRegistro(viewModel: UsuarioViewModel, onRegisterSuccess: () -> Unit) {
     var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -46,12 +46,25 @@ fun TelaRegistro(viewModel: UsuarioViewModel, onRegister: () -> Unit) {
         Button(
             onClick = {
                 val usuario = Usuario(nome = nome, email = email, senha = senha)
-                viewModel.inserir(usuario)
-                onRegister()
+                viewModel.inserir(usuario) { success ->
+                    if (success) {
+                        onRegisterSuccess()
+                    } else {
+                        errorMessage = "Falha ao registrar. Tente novamente."
+                    }
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Registrar")
+        }
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }

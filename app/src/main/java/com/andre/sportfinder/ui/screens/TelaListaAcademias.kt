@@ -1,4 +1,3 @@
-
 package com.andre.sportfinder.ui.screens
 
 import androidx.compose.foundation.clickable
@@ -9,11 +8,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 
 data class Academia(val nome: String, val localizacao: String, val contato: String)
 
 @Composable
-fun TelaListaAcademias(academias: List<Academia>) {
+fun TelaListaAcademias(academias: List<Academia>, navController: NavHostController) {
     var pesquisa by remember { mutableStateOf("") }
     val academiasFiltradas = academias.filter {
         it.nome.contains(pesquisa, ignoreCase = true) ||
@@ -35,19 +35,21 @@ fun TelaListaAcademias(academias: List<Academia>) {
         Spacer(modifier = Modifier.height(8.dp))
         LazyColumn {
             items(academiasFiltradas) { academia ->
-                AcademiaItem(academia)
+                AcademiaItem(academia, navController)
             }
         }
     }
 }
 
 @Composable
-fun AcademiaItem(academia: Academia) {
+fun AcademiaItem(academia: Academia, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable { /* Navegar para detalhes da academia */ }
+            .clickable {
+                navController.navigate("detalhes_academia/${academia.nome}/${academia.localizacao}/${academia.contato}")
+            }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = academia.nome, style = MaterialTheme.typography.headlineMedium)

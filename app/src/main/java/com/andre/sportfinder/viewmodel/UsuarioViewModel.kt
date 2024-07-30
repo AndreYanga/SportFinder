@@ -8,9 +8,14 @@ import com.andre.sportfinder.data.repository.UsuarioRepository
 import kotlinx.coroutines.launch
 
 class UsuarioViewModel(private val repository: UsuarioRepository) : ViewModel() {
-    fun inserir(usuario: Usuario) {
+    fun inserir(usuario: Usuario, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            repository.inserir(usuario)
+            try {
+                repository.inserir(usuario)
+                onResult(true)
+            } catch (e: Exception) {
+                onResult(false)
+            }
         }
     }
 
